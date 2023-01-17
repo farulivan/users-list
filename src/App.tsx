@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ErrorModal from './components/UI/ErrorModal';
 import AddUser from './components/Users/AddUser';
 import UsersList from './components/UsersList';
 
@@ -12,8 +13,9 @@ export type UserData = {
 const App = () => {
   const [usersList, setUsersList] = useState<UserData[]>([]);
 
-  const addUserHandler = (newUser: UserData) =>
+  const addUserHandler = (newUser: UserData) => {
     setUsersList(prevUsers => [newUser, ...prevUsers]);
+  };
 
   return (
     <div className="App">
