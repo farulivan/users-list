@@ -1,16 +1,21 @@
 import type { FC } from 'react';
+import React from 'react';
+import { createPortal } from 'react-dom';
 import Button from './Button';
 import Card from './Card';
 import styles from './ErrorModal.module.css';
 
-const ErrorModal: FC<{
+const Backdrop: FC<{ onConfirm: () => void }> = ({ onConfirm }) => {
+  return <div className={styles.backdrop} onClick={onConfirm} />;
+};
+
+const ModalOverlay: FC<{
   onConfirm: () => void;
   title?: string;
   message?: string;
 }> = ({ onConfirm, title, message }) => {
   return (
     <>
-      <div className={styles.backdrop} onClick={onConfirm} />
       <Card className={styles.modal}>
         <header className={styles.header}>
           <h2>{title}</h2>
@@ -25,6 +30,25 @@ const ErrorModal: FC<{
         </div>
       </Card>
     </>
+  );
+};
+
+const ErrorModal: FC<{
+  onConfirm: () => void;
+  title?: string;
+  message?: string;
+}> = ({ onConfirm, title, message }) => {
+  return (
+    <React.Fragment>
+      {createPortal(
+        <Backdrop onConfirm={onConfirm} />,
+        document.getElementById('backdrop-root') as HTMLElement
+      )}
+      {createPortal(
+        <ModalOverlay onConfirm={onConfirm} title={title} message={message} />,
+        document.getElementById('modal-root') as HTMLElement
+      )}
+    </React.Fragment>
   );
 };
 
