@@ -4,8 +4,8 @@ import Button from '../UI/Button';
 import Card from '../UI/Card';
 import styles from './AddUser.module.css';
 
-const AddUser: React.FC<{ saveUserData: (inputData: UserData) => void }> = ({
-  saveUserData,
+const AddUser: React.FC<{ onAddUser: (inputData: UserData) => void }> = ({
+  onAddUser,
 }) => {
   const [enteredUserName, setEnteredUserName] = useState('');
   const [enteredAge, setEnteredAge] = useState('');
@@ -13,22 +13,43 @@ const AddUser: React.FC<{ saveUserData: (inputData: UserData) => void }> = ({
 
   const addUserHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+
+    if (
+      enteredUserName.trim().length === 0 ||
+      enteredAge.trim().length === 0 ||
+      enteredEmail.trim().length === 0
+    ) {
+      return;
+    }
+    if (+enteredAge < 1) {
+      return;
+    }
+
     const newUser = {
       username: enteredUserName,
-      age: Number(enteredAge),
+      age: +enteredAge,
       email: enteredEmail,
+      id: Math.random().toString(),
     };
-    saveUserData(newUser);
+    onAddUser(newUser);
+
+    setEnteredUserName('');
+    setEnteredAge('');
+    setEnteredEmail('');
   };
 
-  const userNameChangeHandler = ({currentTarget}: React.FormEvent<HTMLInputElement>) =>
+  const userNameChangeHandler = ({
+    currentTarget,
+  }: React.FormEvent<HTMLInputElement>) =>
     setEnteredUserName(currentTarget.value);
 
-  const ageChangeHandler = ({currentTarget}: React.FormEvent<HTMLInputElement>) =>
-    setEnteredAge(currentTarget.value);
+  const ageChangeHandler = ({
+    currentTarget,
+  }: React.FormEvent<HTMLInputElement>) => setEnteredAge(currentTarget.value);
 
-  const emailChangeHandler = ({currentTarget}: React.FormEvent<HTMLInputElement>) =>
-    setEnteredEmail(currentTarget.value);
+  const emailChangeHandler = ({
+    currentTarget,
+  }: React.FormEvent<HTMLInputElement>) => setEnteredEmail(currentTarget.value);
 
   return (
     <Card className={styles.input}>
@@ -54,7 +75,9 @@ const AddUser: React.FC<{ saveUserData: (inputData: UserData) => void }> = ({
           value={enteredEmail}
           onChange={emailChangeHandler}
         />
-        <Button type="submit" onClick={addUserHandler}>Add User</Button>
+        <Button type="submit" onClick={addUserHandler}>
+          Add User
+        </Button>
       </form>
     </Card>
   );
